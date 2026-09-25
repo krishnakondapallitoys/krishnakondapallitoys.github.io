@@ -12,20 +12,18 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build & Deployment (GitHub Pages)
 
-Run `npx ng build --base-href /krishnakondapallitoys/` to build the project for GitHub Pages. 
+Because this repository is named `krishnakondapallitoys.github.io`, the site is hosted directly at the root URL.
+
+Run the following command to build the project for GitHub Pages:
+```bash
+npx ng build --base-href /
+```
+
 The build artifacts will be deposited directly into the `docs/` directory.
 
 To deploy the site:
 1. Commit the `docs/` folder to GitHub.
-2. In your GitHub Repository Settings -> Pages, select `/docs` as your deployment folder from the `main` branch.
-
-### Note on GitHub URLs
-By default, your site will be hosted at `https://<username>.github.io/krishnakondapallitoys/`. 
-If you want the shorter URL `https://<username>.github.io/` without the extra subpath:
-1. Rename your repository in GitHub Settings to exactly `<username>.github.io`
-2. Change the build command in your terminal to use a root base href: `npx ng build --base-href /`
-3. Commit and push the new build.
-
+2. In your GitHub Repository Settings -> Pages, ensure the Source is set to **Deploy from a branch**, select the `main` branch, and select `/docs` as your deployment folder.
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
