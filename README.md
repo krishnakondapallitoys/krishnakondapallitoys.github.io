@@ -19,6 +19,13 @@ To deploy the site:
 1. Commit the `docs/` folder to GitHub.
 2. In your GitHub Repository Settings -> Pages, select `/docs` as your deployment folder from the `main` branch.
 
+### Note on GitHub URLs
+By default, your site will be hosted at `https://<username>.github.io/krishnakondapallitoys/`. 
+If you want the shorter URL `https://<username>.github.io/` without the extra subpath:
+1. Rename your repository in GitHub Settings to exactly `<username>.github.io`
+2. Change the build command in your terminal to use a root base href: `npx ng build --base-href /`
+3. Commit and push the new build.
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
