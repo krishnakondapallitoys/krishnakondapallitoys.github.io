@@ -10,9 +10,14 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## Build & Deployment (GitHub Pages)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `npx ng build --base-href /krishnakondapallitoys/` to build the project for GitHub Pages. 
+The build artifacts will be deposited directly into the `docs/` directory.
+
+To deploy the site:
+1. Commit the `docs/` folder to GitHub.
+2. In your GitHub Repository Settings -> Pages, select `/docs` as your deployment folder from the `main` branch.
 
 ## Running unit tests
 
