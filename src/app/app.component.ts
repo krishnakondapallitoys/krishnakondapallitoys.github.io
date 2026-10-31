@@ -1,16 +1,15 @@
-import { AfterViewInit, Component, HostListener } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-interface Toy {
-  id: number;
-  name: string;
-  image: string;
-  price: string;
-  category: string;
-}
+import { GA_MEASUREMENT_ID, SITE_URL, WHATSAPP_NUMBER } from './site-config';
+import { TOYS, Toy } from './toys';
 
-// WhatsApp number in international format, digits only (country code + number, no '+' or spaces)
-const WHATSAPP_NUMBER = '919652020133';
+declare global {
+  interface Window {
+    dataLayer: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
 
 @Component({
   selector: 'app-root',
@@ -19,37 +18,42 @@ const WHATSAPP_NUMBER = '919652020133';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'Krishna Toys';
 
-  toys: Toy[] = [
-    { id: 1, name: 'Dancing Doll', image: 'img/dancin-doll.jpeg', price: '₹450', category: 'Dolls' },
-    { id: 2, name: 'Lord Krishna', image: 'img/krishna.jpeg', price: '₹800', category: 'Divine' },
-    { id: 3, name: 'Pallaki (Palanquin)', image: 'img/pallakai.jpeg', price: '₹1200', category: 'Traditional' },
-    { id: 4, name: 'Lord Venkateswara', image: 'img/lord-venkateswara.jpeg', price: '₹1500', category: 'Divine' },
-    { id: 5, name: 'Seetha Rama', image: 'img/seetha-ram.jpeg', price: '₹950', category: 'Divine' },
-    { id: 6, name: 'Ambbari Elephant', image: 'img/Ambbari.jpeg', price: '₹1100', category: 'Animals' },
-    { id: 7, name: 'Bullock Cart', image: 'img/Bulla-coat.jpeg', price: '₹600', category: 'Village Life' },
-    { id: 8, name: 'Village Market', image: 'img/Market.jpeg', price: '₹2200', category: 'Sets' },
-    { id: 9, name: 'Dasavataram Set', image: 'img/dasaavartaram.jpeg', price: '₹3500', category: 'Divine Sets' },
-    { id: 10, name: 'Traditional Marriage', image: 'img/Marriage.jpeg', price: '₹2800', category: 'Sets' },
-    { id: 11, name: 'Rama in Boat', image: 'img/rama-boat.jpeg', price: '₹1300', category: 'Divine' },
-    { id: 12, name: 'Lord Hanuman', image: 'img/Anjayana.jpeg', price: '₹750', category: 'Divine' },
-    { id: 13, name: 'Village Hut', image: 'img/HUT.jpeg', price: '₹400', category: 'Village Life' },
-    { id: 14, name: 'Village House', image: 'img/House.jpeg', price: '₹550', category: 'Village Life' },
-    { id: 15, name: 'Temple', image: 'img/temple.jpeg', price: '₹1800', category: 'Architecture' },
-    { id: 16, name: 'White Elephant', image: 'img/White-elephant.jpeg', price: '₹900', category: 'Animals' },
-    { id: 17, name: 'Lord Balaji', image: 'img/venstwara.jpeg', price: '₹1600', category: 'Divine' },
-    { id: 18, name: 'Authentic Set', image: 'img/WhatsApp Image 2026-09-25 at 2.40.22 PM (1).jpeg', price: '₹1250', category: 'Special' },
-  ];
+  toys: Toy[] = TOYS;
+  categories: string[] = ['All', ...new Set(TOYS.map(toy => toy.category))];
+  selectedCategory = 'All';
+  searchTerm = '';
 
   selectedToy: Toy | null = null;
+  imageIndex = 0;
   menuOpen = false;
+
+  private touchStartX = 0;
+
+  get filteredToys(): Toy[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    return this.toys.filter(toy =>
+      (this.selectedCategory === 'All' || toy.category === this.selectedCategory) &&
+      (!term || toy.name.toLowerCase().includes(term) || toy.category.toLowerCase().includes(term))
+    );
+  }
+
+  ngOnInit() {
+    this.loadAnalytics();
+  }
 
   ngAfterViewInit() {
     // Sections render after page load, so jump to a #section in the URL ourselves
     const id = location.hash.slice(1);
-    if (id) {
+    const sharedToy = this.toys.find(toy => id === `toy-${toy.id}`);
+    if (sharedToy) {
+      setTimeout(() => {
+        document.getElementById('collection')?.scrollIntoView();
+        this.openModal(sharedToy);
+      });
+    } else if (id) {
       setTimeout(() => document.getElementById(id)?.scrollIntoView());
     }
   }
@@ -65,6 +69,21 @@ export class AppComponent implements AfterViewInit {
     this.menuOpen = !this.menuOpen;
   }
 
+  selectCategory(category: string) {
+    this.selectedCategory = category;
+    this.track('filter_category', { category });
+  }
+
+  onSearch(event: Event) {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+  }
+
+  clearFilters(searchInput: HTMLInputElement) {
+    searchInput.value = '';
+    this.searchTerm = '';
+    this.selectedCategory = 'All';
+  }
+
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.selectedToy) {
@@ -73,9 +92,78 @@ export class AppComponent implements AfterViewInit {
     this.menuOpen = false;
   }
 
+  @HostListener('document:keydown.arrowleft')
+  onArrowLeft() {
+    if (this.selectedToy) {
+      this.prevImage();
+    }
+  }
+
+  @HostListener('document:keydown.arrowright')
+  onArrowRight() {
+    if (this.selectedToy) {
+      this.nextImage();
+    }
+  }
+
+  private loadAnalytics() {
+    if (!GA_MEASUREMENT_ID) {
+      return;
+    }
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_MEASUREMENT_ID);
+  }
+
+  track(event: string, params: Record<string, string> = {}) {
+    window.gtag?.('event', event, params);
+  }
+
   openModal(toy: Toy) {
     this.selectedToy = toy;
+    this.imageIndex = 0;
+    this.track('toy_view', { toy_name: toy.name, toy_category: toy.category });
     document.body.style.overflow = 'hidden'; // Prevent scrolling
+  }
+
+  closeModal() {
+    this.selectedToy = null;
+    document.body.style.overflow = 'auto'; // Restore scrolling
+  }
+
+  prevImage() {
+    const count = this.selectedToy?.images.length ?? 0;
+    if (count > 1) {
+      this.imageIndex = (this.imageIndex - 1 + count) % count;
+    }
+  }
+
+  nextImage() {
+    const count = this.selectedToy?.images.length ?? 0;
+    if (count > 1) {
+      this.imageIndex = (this.imageIndex + 1) % count;
+    }
+  }
+
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].clientX;
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    const distance = event.changedTouches[0].clientX - this.touchStartX;
+    if (distance > 50) {
+      this.prevImage();
+    } else if (distance < -50) {
+      this.nextImage();
+    }
   }
 
   whatsappLink(toy?: Toy): string {
@@ -85,8 +173,8 @@ export class AppComponent implements AfterViewInit {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   }
 
-  closeModal() {
-    this.selectedToy = null;
-    document.body.style.overflow = 'auto'; // Restore scrolling
+  shareLink(toy: Toy): string {
+    const message = `Look at this handmade Kondapalli toy from Krishna Toys: ${toy.name}\n${SITE_URL}#toy-${toy.id}`;
+    return `https://wa.me/?text=${encodeURIComponent(message)}`;
   }
 }
