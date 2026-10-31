@@ -137,6 +137,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   closeModal() {
     this.selectedToy = null;
     document.body.style.overflow = 'auto'; // Restore scrolling
+    // Drop a shared #toy-<id> from the URL so a refresh doesn't reopen the popup
+    if (location.hash.startsWith('#toy-')) {
+      history.replaceState(null, '', '#collection');
+    }
   }
 
   prevImage() {
