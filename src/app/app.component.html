@@ -6,11 +6,11 @@
           [attr.aria-expanded]="menuOpen" aria-controls="nav-links" aria-label="Toggle menu">
     {{ menuOpen ? '✕' : '☰' }}
   </button>
-  <ul id="nav-links" class="nav-links" [class.open]="menuOpen" (click)="menuOpen = false">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#collection">Collection</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#location">Visit Us</a></li>
+  <ul id="nav-links" class="nav-links" [class.open]="menuOpen">
+    <li><a href="#home" (click)="scrollTo($event, 'home')">Home</a></li>
+    <li><a href="#collection" (click)="scrollTo($event, 'collection')">Collection</a></li>
+    <li><a href="#about" (click)="scrollTo($event, 'about')">About</a></li>
+    <li><a href="#location" (click)="scrollTo($event, 'location')">Visit Us</a></li>
   </ul>
 </nav>
 
@@ -19,7 +19,7 @@
     <div class="hero-content">
       <h1 class="hero-title text-gradient">The Art of Kondapalli</h1>
       <p class="hero-subtitle">Authentic, handcrafted wooden toys bringing heritage to your home.</p>
-      <a href="#collection" class="btn-primary">Explore Collection</a>
+      <a href="#collection" (click)="scrollTo($event, 'collection')" class="btn-primary">Explore Collection</a>
     </div>
     <div class="hero-image-wrapper">
       <div class="hero-image glass-panel">

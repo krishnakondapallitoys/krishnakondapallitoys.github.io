@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { AfterViewInit, Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Toy {
@@ -19,7 +19,7 @@ const WHATSAPP_NUMBER = '919652020133';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   title = 'Krishna Toys';
 
   toys: Toy[] = [
@@ -45,6 +45,21 @@ export class AppComponent {
 
   selectedToy: Toy | null = null;
   menuOpen = false;
+
+  ngAfterViewInit() {
+    // Sections render after page load, so jump to a #section in the URL ourselves
+    const id = location.hash.slice(1);
+    if (id) {
+      setTimeout(() => document.getElementById(id)?.scrollIntoView());
+    }
+  }
+
+  scrollTo(event: Event, id: string) {
+    event.preventDefault();
+    this.menuOpen = false;
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    history.replaceState(null, '', `#${id}`);
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
