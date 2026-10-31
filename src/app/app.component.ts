@@ -9,6 +9,9 @@ interface Toy {
   category: string;
 }
 
+// WhatsApp number in international format, digits only (country code + number, no '+' or spaces)
+const WHATSAPP_NUMBER = '919999999999';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -45,6 +48,13 @@ export class AppComponent {
   openModal(toy: Toy) {
     this.selectedToy = toy;
     document.body.style.overflow = 'hidden'; // Prevent scrolling
+  }
+
+  whatsappLink(toy?: Toy): string {
+    const message = toy
+      ? `Hello Krishna Toys, I am interested in the "${toy.name}" (${toy.category}). Could you share the price and availability?`
+      : 'Hello Krishna Toys, I would like to know more about your Kondapalli toys.';
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   }
 
   closeModal() {
