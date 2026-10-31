@@ -2,7 +2,11 @@
   <div class="nav-brand">
     <span class="brand-text text-gradient">Krishna Toys</span>
   </div>
-  <ul class="nav-links">
+  <button class="menu-toggle" type="button" (click)="toggleMenu()"
+          [attr.aria-expanded]="menuOpen" aria-controls="nav-links" aria-label="Toggle menu">
+    {{ menuOpen ? '✕' : '☰' }}
+  </button>
+  <ul id="nav-links" class="nav-links" [class.open]="menuOpen" (click)="menuOpen = false">
     <li><a href="#home">Home</a></li>
     <li><a href="#collection">Collection</a></li>
     <li><a href="#about">About</a></li>

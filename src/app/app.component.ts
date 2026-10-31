@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Toy {
@@ -44,6 +44,19 @@ export class AppComponent {
   ];
 
   selectedToy: Toy | null = null;
+  menuOpen = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.selectedToy) {
+      this.closeModal();
+    }
+    this.menuOpen = false;
+  }
 
   openModal(toy: Toy) {
     this.selectedToy = toy;

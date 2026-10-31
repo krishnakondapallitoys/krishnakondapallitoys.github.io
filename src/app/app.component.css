@@ -36,6 +36,17 @@
   color: var(--primary);
 }
 
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
 /* Main Layout */
 main {
   padding-top: 80px;
@@ -424,12 +435,31 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    justify-content: center;
+  .menu-toggle {
+    display: block;
   }
 
   .nav-links {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg-dark);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 1rem 5%;
+    border-top: 1px solid var(--glass-border);
   }
 
   .hero {
