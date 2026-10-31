@@ -321,6 +321,29 @@ main {
   margin-bottom: 0;
 }
 
+.about-heading {
+  font-size: 1.5rem;
+  margin: 2.5rem 0 1rem;
+  color: var(--primary);
+}
+
+.about strong {
+  color: var(--text-light);
+}
+
+.craft-steps {
+  text-align: left;
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  padding-left: 1.5rem;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.craft-steps li {
+  margin-bottom: 0.8rem;
+}
+
 /* Location */
 .location {
   margin: 5rem auto;
