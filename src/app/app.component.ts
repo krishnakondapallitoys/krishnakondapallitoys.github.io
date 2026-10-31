@@ -10,7 +10,7 @@ interface Toy {
 }
 
 // WhatsApp number in international format, digits only (country code + number, no '+' or spaces)
-const WHATSAPP_NUMBER = '919999999999';
+const WHATSAPP_NUMBER = '919652020133';
 
 @Component({
   selector: 'app-root',
