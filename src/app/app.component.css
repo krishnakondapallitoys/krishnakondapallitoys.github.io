@@ -365,6 +365,51 @@ main {
   color: var(--text-light);
 }
 
+.shop-hours,
+.shop-phone {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.shop-hours strong,
+.shop-phone strong {
+  color: var(--text-light);
+}
+
+.shop-phone {
+  margin-bottom: 2rem;
+}
+
+.shop-phone a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.location-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-call {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.btn-call:hover {
+  background: var(--primary);
+  color: var(--bg-darker);
+}
+
 .map-wrapper {
   border-radius: 20px;
   overflow: hidden;
